@@ -8,7 +8,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
-import androidx.room.Room;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,14 +18,14 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.bigkoo.pickerview.builder.OptionsPickerBuilder;
-import com.bigkoo.pickerview.listener.OnOptionsSelectListener;
 import com.bigkoo.pickerview.view.OptionsPickerView;
-import com.charder.roomdemo.room.AppDataBase;
+import com.charder.roomdemo.common.Common;
 import com.charder.roomdemo.room.entity.Account;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.Date;
 
 
 public class RegisterFragment extends Fragment {
@@ -35,8 +34,6 @@ public class RegisterFragment extends Fragment {
     Button bt_register ;
 
     Activity activity;
-
-    AppDataBase db;
 
     Account newAccount = new Account();
 
@@ -50,9 +47,6 @@ public class RegisterFragment extends Fragment {
     public void onViewCreated(@NonNull @NotNull View view, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         activity = getActivity();
-        if (activity != null){
-            db = Room.databaseBuilder(activity,AppDataBase.class,Common.BodyCompositionDb).build();
-        }
         et_account = view.findViewById(R.id.et_account);
         et_password = view.findViewById(R.id.et_password);
         et_permission = view.findViewById(R.id.et_permission);
@@ -91,9 +85,10 @@ public class RegisterFragment extends Fragment {
                 }
                 newAccount.setAccount(account);
                 newAccount.setPassword(password);
-                if (db != null){
+                newAccount.setCreateTime(new Date());
+                if (Common.db != null){
                     try {
-                        db.accountDao().insert(newAccount);
+                        Common.db.accountDao().insert(newAccount);
                         activity.runOnUiThread( () -> {
                             Navigation.findNavController(v).popBackStack();
                         });
@@ -102,13 +97,12 @@ public class RegisterFragment extends Fragment {
                     }
                 }
             });
-
         });
     }
 
     Boolean checkAccount(String account){
         try {
-            Account checkAccount = db.accountDao().findByAccount(account);
+            Account checkAccount = Common.db.accountDao().findByAccount(account);
             if (checkAccount != null){
                 return true;
             }else {

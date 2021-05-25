@@ -4,10 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".SettingFragment">
+    tools:context=".DataFragment">
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="產生隨機量測結果" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_account"
+        android:id="@+id/rv_data"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 </LinearLayout>

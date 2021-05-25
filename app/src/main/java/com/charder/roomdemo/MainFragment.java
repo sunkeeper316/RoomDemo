@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.room.Room;
@@ -18,11 +16,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.charder.roomdemo.common.Common;
 import com.charder.roomdemo.preferences.Preferences;
 import com.charder.roomdemo.room.AppDataBase;
 import com.charder.roomdemo.room.entity.Account;
 
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class MainFragment extends Fragment {
@@ -31,8 +30,6 @@ public class MainFragment extends Fragment {
     Button bt_register , bt_signIn;
 
     Activity activity;
-
-    AppDataBase db;
 
     List<Account> accountList;
 
@@ -45,9 +42,9 @@ public class MainFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         activity = getActivity();
         if (activity != null){
-            db = Room.databaseBuilder(activity,AppDataBase.class,Common.BodyCompositionDb).build();
+            Common.db = Room.databaseBuilder(activity,AppDataBase.class,Common.BodyCompositionDb).build();
         }
-        getAllAccount();
+        setAdmin();
         et_account = view.findViewById(R.id.et_account);
         et_password = view.findViewById(R.id.et_password);
         bt_register = view.findViewById(R.id.bt_register);
@@ -79,10 +76,28 @@ public class MainFragment extends Fragment {
         });
     }
 
+    void setAdmin(){
+        try {
+            AsyncTask.execute( () -> {
+                Account checkAccount = Common.db.accountDao().findByAccount("Admin");
+                if (checkAccount == null){
+                    Account admin = new Account();
+                    admin.setCreateTime(new Date());
+                    admin.setPermission(0);
+                    admin.setAccount("Admin");
+                    admin.setPassword("123456");
+                    Common.db.accountDao().insert(admin);
+                }
+            });
+        }catch (Exception e){
+            Log.e("Exception" , e.getLocalizedMessage());
+        }
+    }
+
     void getAllAccount() {
         try {
             AsyncTask.execute( () -> {
-                accountList = db.accountDao().getAll();
+                accountList = Common.db.accountDao().getAll();
                 for(Account a : accountList){
                     Log.e("Account" , a.getAccount() + " : " + a.getPassword());
                 }
@@ -94,7 +109,7 @@ public class MainFragment extends Fragment {
 
     Boolean checkAccount(String account , String password){
         try {
-            Common.currentAccount = db.accountDao().loginCheck(account , password);
+            Common.currentAccount = Common.db.accountDao().loginCheck(account , password);
             if (Common.currentAccount != null){
                 return true;
             }else {

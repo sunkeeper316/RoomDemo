@@ -30,6 +30,12 @@
         <action
             android:id="@+id/action_measuredPersonFragment_to_addMeasuredPersonFragment"
             app:destination="@id/addMeasuredPersonFragment" />
+        <action
+            android:id="@+id/action_measuredPersonFragment_to_dataFragment"
+            app:destination="@id/dataFragment" />
+        <action
+            android:id="@+id/action_measuredPersonFragment_to_settingFragment"
+            app:destination="@id/settingFragment" />
     </fragment>
     <fragment
         android:id="@+id/registerFragment"
@@ -41,4 +47,9 @@
         android:name="com.charder.roomdemo.AddMeasuredPersonFragment"
         android:label="fragment_add_measured_person"
         tools:layout="@layout/fragment_add_measured_person" />
+    <fragment
+        android:id="@+id/dataFragment"
+        android:name="com.charder.roomdemo.DataFragment"
+        android:label="fragment_data"
+        tools:layout="@layout/fragment_data" />
 </navigation>

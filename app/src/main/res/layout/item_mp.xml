@@ -24,14 +24,14 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/tv_lastDate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="" />
 
     <TextView
-        android:id="@+id/tv"
+        android:id="@+id/tv_posture"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:text="" />
