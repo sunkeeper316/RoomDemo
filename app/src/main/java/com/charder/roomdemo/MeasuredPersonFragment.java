@@ -50,7 +50,6 @@ public class MeasuredPersonFragment extends Fragment {
         rv_MeasuredPerson.setLayoutManager(new LinearLayoutManager(activity));
         measuredPersonAdapter = new MeasuredPersonAdapter(activity,measuredPersonArrayList);
         rv_MeasuredPerson.setAdapter(measuredPersonAdapter);
-//        getAllMeasureMP();
         getMP();
         bt_addMP = view.findViewById(R.id.bt_addMP);
         bt_addMP.setOnClickListener( v -> {
@@ -61,24 +60,19 @@ public class MeasuredPersonFragment extends Fragment {
             Navigation.findNavController(v).navigate(R.id.action_measuredPersonFragment_to_settingFragment);
         });
     }
-    void getAllMeasureMP() {
-        try {
-            AsyncTask.execute( () -> {
-                List<MeasuredPerson> measuredPeople = Common.db.measuredPersonDao().getAllMP(Common.currentAccount.getId());
-                measuredPersonArrayList.clear();
-                measuredPersonArrayList.addAll(measuredPeople);
-                activity.runOnUiThread(() -> {
-                    measuredPersonAdapter.notifyDataSetChanged();
-                });
-            });
-        }catch (Exception e){
-            Log.e("Exception" , e.getLocalizedMessage());
-        }
-    }
+
     void getMP() {
         try {
             AsyncTask.execute( () -> {
-                List<MeasuredPerson> measuredPeople = Common.db.accountDao().getMeasuredPerson(Common.currentAccount.getId());
+                List<MeasuredPerson> measuredPeople;
+                int permission = Common.currentAccount.getPermission();
+                if (permission == 0){ // Admin 可以看到所有受測者資料
+                    measuredPeople = Common.db.measuredPersonDao().getAllMP();
+                }else if (permission == 1){ // 管理者 可以看到自己及所有使用者受測者資料
+                    measuredPeople = Common.db.measuredPersonDao().getPermission1MP(Common.currentAccount.getId());
+                }else { // 使用者 可以看到自己受測者資料
+                    measuredPeople = Common.db.measuredPersonDao().getPermission2MP(Common.currentAccount.getId());
+                }
                 measuredPersonArrayList.clear();
                 measuredPersonArrayList.addAll(measuredPeople);
                 activity.runOnUiThread(() -> {
@@ -115,6 +109,13 @@ public class MeasuredPersonFragment extends Fragment {
             MeasuredPerson measuredPerson = measuredPersonArrayList.get(position);
             holder.tv_id.setText(measuredPerson.getIdCode());
             holder.tv_name.setText(measuredPerson.getName());
+
+            holder.itemView.setOnClickListener( v -> {
+                Bundle bundle = new Bundle();
+                bundle.putInt("MeasuredPersonId" ,  measuredPerson.getId());
+
+                Navigation.findNavController(v).navigate(R.id.action_measuredPersonFragment_to_dataFragment , bundle);
+            });
         }
         @Override
         public int getItemCount() {
@@ -122,3 +123,18 @@ public class MeasuredPersonFragment extends Fragment {
         }
     }
 }
+
+//    void getAllMeasureMP() {
+//        try {
+//            AsyncTask.execute( () -> {
+//                List<MeasuredPerson> measuredPeople = Common.db.measuredPersonDao().getAllMP();
+//                measuredPersonArrayList.clear();
+//                measuredPersonArrayList.addAll(measuredPeople);
+//                activity.runOnUiThread(() -> {
+//                    measuredPersonAdapter.notifyDataSetChanged();
+//                });
+//            });
+//        }catch (Exception e){
+//            Log.e("Exception" , e.getLocalizedMessage());
+//        }
+//    }

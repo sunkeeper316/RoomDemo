@@ -17,16 +17,7 @@ import static androidx.room.OnConflictStrategy.REPLACE;
 
 @Dao
 public interface AccountDao {
-    @Query("SELECT MeasuredPerson.id ," +
-            " MeasuredPerson.account_id," +
-            " MeasuredPerson.birthday," +
-            " MeasuredPerson.gender," +
-            " MeasuredPerson.heightX10," +
-            " MeasuredPerson.idCode," +
-            " MeasuredPerson.name," +
-            "MeasuredPerson.createTime"+
-            " FROM Account JOIN MeasuredPerson ON Account.id = MeasuredPerson.account_id  WHERE Account.id = :id OR Account.permission = 2 ")
-    List<MeasuredPerson> getMeasuredPerson(int id);
+
     @Query("SELECT * FROM Account WHERE permission != 0")
     List<Account> getAll();
     @Query("SELECT * FROM Account WHERE permission = 2")

@@ -3,10 +3,11 @@ package com.charder.roomdemo.room.entity;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Entity(tableName = "Account")
-public class Account {
+public class Account implements Serializable {
 
     @PrimaryKey(autoGenerate = true)
     private int id;

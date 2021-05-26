@@ -4,6 +4,7 @@ import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Entity(tableName = "MeasurementData",
@@ -12,7 +13,7 @@ import java.util.Date;
                 childColumns = "MP_id",
                 onDelete = ForeignKey.CASCADE)
         })
-public class MeasurementData {
+public class MeasurementData implements Serializable {
     @PrimaryKey(autoGenerate = true)
     private int id;
 

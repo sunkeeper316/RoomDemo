@@ -4,13 +4,15 @@ import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 
+import java.io.Serializable;
+
 @Entity(tableName = "MeasurementFunc",
         foreignKeys = {@ForeignKey(entity = MeasurementData.class,
                 parentColumns = "id",
                 childColumns = "data_id",
                 onDelete = ForeignKey.CASCADE)
         })
-public class MeasurementFunc {
+public class MeasurementFunc implements Serializable {
     @PrimaryKey(autoGenerate = true)
     private int id;
 

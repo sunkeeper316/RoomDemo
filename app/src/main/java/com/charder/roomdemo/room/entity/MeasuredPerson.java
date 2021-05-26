@@ -4,6 +4,7 @@ import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Entity(tableName = "MeasuredPerson",
@@ -12,7 +13,7 @@ import java.util.Date;
         childColumns = "account_id",
         onDelete = ForeignKey.CASCADE)
 })
-public class MeasuredPerson {
+public class MeasuredPerson implements Serializable {
     @PrimaryKey(autoGenerate = true)
     private int id;
 
@@ -24,6 +25,8 @@ public class MeasuredPerson {
     private Boolean gender;  // true = man
     private Date birthday;
     private Date createTime;
+    private Date lastDate;
+    private int lastX10;
 
     public int getId() {
         return id;
@@ -87,5 +90,21 @@ public class MeasuredPerson {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public Date getLastDate() {
+        return lastDate;
+    }
+
+    public void setLastDate(Date lastDate) {
+        this.lastDate = lastDate;
+    }
+
+    public int getLastX10() {
+        return lastX10;
+    }
+
+    public void setLastX10(int lastX10) {
+        this.lastX10 = lastX10;
     }
 }
