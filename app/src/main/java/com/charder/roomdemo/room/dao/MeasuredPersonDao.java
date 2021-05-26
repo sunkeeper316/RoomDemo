@@ -24,11 +24,11 @@ public interface MeasuredPersonDao {
             " MeasuredPerson.idCode," +
             " MeasuredPerson.name," +
             "MeasuredPerson.createTime"+
-            " FROM Account INNER JOIN MeasuredPerson ON Account.id = MeasuredPerson.account_id  WHERE Account.id = :account_id OR Account.permission = 2 ")
+            " FROM Account INNER JOIN MeasuredPerson ON Account.id = MeasuredPerson.account_id  WHERE Account.id = :account_id OR Account.permission = 2 ORDER BY MeasuredPerson.name ASC ")
     List<MeasuredPerson> getPermission1MP(int account_id);
-    @Query("SELECT * FROM MeasuredPerson Where account_id = :account_id")
+    @Query("SELECT * FROM MeasuredPerson Where account_id = :account_id ORDER BY MeasuredPerson.name ASC")
     List<MeasuredPerson> getPermission2MP(int account_id);
-    @Query("SELECT * FROM MeasuredPerson ")
+    @Query("SELECT * FROM MeasuredPerson ORDER BY MeasuredPerson.name ASC")
     List<MeasuredPerson> getAllMP();
     @Insert(onConflict = REPLACE)
     List<Long> insert(MeasuredPerson... measuredPersons);

@@ -18,6 +18,8 @@ import static androidx.room.OnConflictStrategy.REPLACE;
 public interface MeasurementFuncDao {
     @Query("SELECT * FROM MeasurementFunc Where data_id = :data_id")
     List<MeasurementFunc> getAllData(int data_id);
+    @Query("SELECT * FROM MeasurementFunc Where data_id = :data_id AND func_id = 20")
+    MeasurementFunc getPostureData(int data_id);
     @Insert(onConflict = REPLACE)
     List<Long> insert(MeasurementFunc... measurementFuncs);
     @Update

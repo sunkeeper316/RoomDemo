@@ -2,6 +2,7 @@ package com.charder.roomdemo.room.entity;
 
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import java.io.Serializable;
@@ -25,7 +26,10 @@ public class MeasuredPerson implements Serializable {
     private Boolean gender;  // true = man
     private Date birthday;
     private Date createTime;
+
+    @Ignore
     private Date lastDate;
+    @Ignore
     private int lastX10;
 
     public int getId() {
@@ -91,6 +95,7 @@ public class MeasuredPerson implements Serializable {
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
+
 
     public Date getLastDate() {
         return lastDate;

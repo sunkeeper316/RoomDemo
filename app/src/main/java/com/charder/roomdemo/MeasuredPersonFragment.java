@@ -20,11 +20,19 @@ import android.widget.TextView;
 
 import com.charder.roomdemo.common.Common;
 import com.charder.roomdemo.room.entity.MeasuredPerson;
+import com.charder.roomdemo.room.entity.MeasurementData;
+import com.charder.roomdemo.room.entity.MeasurementFunc;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 
 public class MeasuredPersonFragment extends Fragment {
@@ -36,6 +44,10 @@ public class MeasuredPersonFragment extends Fragment {
     ArrayList<MeasuredPerson> measuredPersonArrayList = new ArrayList<>();
 
     Activity activity;
+
+    Collator collator = Collator.getInstance();
+
+    boolean isASC = true;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -59,6 +71,43 @@ public class MeasuredPersonFragment extends Fragment {
         bt_setting.setOnClickListener( v -> {
             Navigation.findNavController(v).navigate(R.id.action_measuredPersonFragment_to_settingFragment);
         });
+        tv_idName = view.findViewById(R.id.tv_idName);
+        tv_idName.setOnClickListener( v -> {
+            Collections.sort(measuredPersonArrayList, (o1, o2) -> collator.compare(o1.getName() , o2.getName()));
+            measuredPersonAdapter.notifyDataSetChanged();
+        });
+        tv_lastDate = view.findViewById(R.id.tv_lastDate);
+        tv_lastDate.setOnClickListener( v -> {
+            if (isASC){
+                isASC = false;
+                Collections.sort(measuredPersonArrayList , (o1, o2) ->{
+                    Date dateO1 = o1.getLastDate();
+                    Date dateO2 = o2.getLastDate();
+                    if (o1.getLastDate() == null){
+                        dateO1 = new Date(0);
+                    }
+                    if (o2.getLastDate() == null){
+                        dateO2 = new Date(0);
+                    }
+                    return dateO2.compareTo(dateO1);
+                });
+            }else {
+                isASC = true;
+                Collections.sort(measuredPersonArrayList , (o1, o2) ->{
+                    Date dateO1 = o1.getLastDate();
+                    Date dateO2 = o2.getLastDate();
+                    if (o1.getLastDate() == null){
+                        dateO1 = new Date();
+                    }
+                    if (o2.getLastDate() == null){
+                        dateO2 = new Date();
+                    }
+                    return dateO1.compareTo(dateO2);
+                });
+            }
+
+            measuredPersonAdapter.notifyDataSetChanged();
+        });
     }
 
     void getMP() {
@@ -74,7 +123,19 @@ public class MeasuredPersonFragment extends Fragment {
                     measuredPeople = Common.db.measuredPersonDao().getPermission2MP(Common.currentAccount.getId());
                 }
                 measuredPersonArrayList.clear();
+                for (MeasuredPerson m : measuredPeople){
+                    MeasurementData data = Common.db.measurementDataDao().getLastData(m.getId());
+                    if (data != null){
+                        m.setLastDate(data.getDate());
+                        MeasurementFunc posture = Common.db.measurementFuncDao().getPostureData(data.getId());
+                        if (posture != null){
+                            m.setLastX10(posture.getNumberX10());
+                        }
+                    }
+                }
                 measuredPersonArrayList.addAll(measuredPeople);
+                Collections.sort(measuredPersonArrayList, (o1, o2) -> collator.compare(o1.getName() , o2.getName()));
+
                 activity.runOnUiThread(() -> {
                     measuredPersonAdapter.notifyDataSetChanged();
                 });
@@ -109,7 +170,12 @@ public class MeasuredPersonFragment extends Fragment {
             MeasuredPerson measuredPerson = measuredPersonArrayList.get(position);
             holder.tv_id.setText(measuredPerson.getIdCode());
             holder.tv_name.setText(measuredPerson.getName());
-
+            Date last = measuredPerson.getLastDate();
+            if (last != null){
+                holder.tv_lastDate.setText(Common.dateFormatFull(last));
+            }else{
+                holder.tv_lastDate.setText("");
+            }
             holder.itemView.setOnClickListener( v -> {
                 Bundle bundle = new Bundle();
                 bundle.putInt("MeasuredPersonId" ,  measuredPerson.getId());

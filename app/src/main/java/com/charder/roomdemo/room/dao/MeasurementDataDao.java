@@ -17,6 +17,8 @@ import static androidx.room.OnConflictStrategy.REPLACE;
 public interface MeasurementDataDao {
     @Query("SELECT * FROM MeasurementData Where MP_id = :MP_id")
     List<MeasurementData> getAllData(int MP_id);
+    @Query("SELECT * FROM MeasurementData Where MP_id = :MP_id ORDER BY MeasurementData.date DESC LIMIT 0,1")
+    MeasurementData getLastData(int MP_id);
     @Insert(onConflict = REPLACE)
     List<Long> insert(MeasurementData... measurementDataList);
     @Update
